@@ -215,3 +215,22 @@ data "aws_iam_policy_document" "instance_role" {
     }
   }
 }
+
+data "aws_iam_policy" "ReadOnlyAccess" {
+  arn = "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess"
+}
+
+data "aws_iam_policy" "SSMManagedInstance" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+
+resource "aws_iam_role_policy_attachment" "read-only-attach" {
+  role       = "${aws_iam_role.instance_role.0.name}"
+  policy_arn = "${data.aws_iam_policy.ReadOnlyAccess.arn}"
+}
+
+resource "aws_iam_role_policy_attachment" "ssm-managed-attach" {
+  role       = "${aws_iam_role.instance_role.0.name}"
+  policy_arn = "${data.aws_iam_policy.SSMManagedInstance.arn}"
+}
